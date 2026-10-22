@@ -1,0 +1,22 @@
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: civicassist-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: civicassist
+      POSTGRES_USER: civicassist_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in your environment}
+    ports:
+      - "5432:5432"
+    volumes:
+      - civicassist-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U civicassist_user -d civicassist"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  civicassist-postgres-data:
