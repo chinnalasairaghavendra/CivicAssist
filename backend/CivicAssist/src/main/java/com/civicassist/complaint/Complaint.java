@@ -1,5 +1,6 @@
 package com.civicassist.complaint;
 
+import com.civicassist.user.AppUser;
 import jakarta.persistence.*;
 
 import java.time.OffsetDateTime;
@@ -36,6 +37,26 @@ public class Complaint {
 
     @Column(name="updated_at",nullable = false)
     private OffsetDateTime updatedAt;
+
+    @Column(name = "ai_category", length = 80)
+    private String aiCategory;
+
+    @Column(name = "ai_urgency", length = 20)
+    private String aiUrgency;
+
+    @Column(name = "recommended_department", length = 100)
+    private String recommendedDepartment;
+
+    @Column(name = "ai_reasoning", columnDefinition = "TEXT")
+    private String aiReasoning;
+
+    @Column(name = "triaged_at")
+    private OffsetDateTime triagedAt;
+
+    @ManyToOne(fetch= FetchType.LAZY)
+    @JoinColumn(name="user_id")
+    private AppUser user;
+
 
     protected Complaint() {
     }
@@ -130,5 +151,49 @@ public class Complaint {
 
     public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public void setUser(AppUser user) {
+        this.user = user;
+    }
+
+    public String getAiCategory() {
+        return aiCategory;
+    }
+
+    public void setAiCategory(String aiCategory) {
+        this.aiCategory = aiCategory;
+    }
+
+    public String getAiUrgency() {
+        return aiUrgency;
+    }
+
+    public void setAiUrgency(String aiUrgency) {
+        this.aiUrgency = aiUrgency;
+    }
+
+    public String getRecommendedDepartment() {
+        return recommendedDepartment;
+    }
+
+    public void setRecommendedDepartment(String recommendedDepartment) {
+        this.recommendedDepartment = recommendedDepartment;
+    }
+
+    public String getAiReasoning() {
+        return aiReasoning;
+    }
+
+    public void setAiReasoning(String aiReasoning) {
+        this.aiReasoning = aiReasoning;
+    }
+
+    public OffsetDateTime getTriagedAt() {
+        return triagedAt;
+    }
+
+    public void setTriagedAt(OffsetDateTime triagedAt) {
+        this.triagedAt = triagedAt;
     }
 }

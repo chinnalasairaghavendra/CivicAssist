@@ -4,6 +4,8 @@ import com.civicassist.complaint.dto.ComplaintResponse;
 import com.civicassist.complaint.dto.CreateComplaintRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,19 +23,19 @@ public class ComplaintController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ComplaintResponse create(@Valid @RequestBody CreateComplaintRequest request)
+    public ComplaintResponse create(@Valid @RequestBody CreateComplaintRequest request, @AuthenticationPrincipal Jwt jwt)
     {
-        return service.create(request);
+        return service.create(request,jwt.getSubject());
     }
 
     @GetMapping
-    public List<ComplaintResponse> findAll(){
-        return service.findAll();
+    public List<ComplaintResponse> findAll(@AuthenticationPrincipal Jwt jwt){
+        return service.findAllForUser(jwt.getSubject());
     }
 
     @GetMapping("/{id}")
-    public ComplaintResponse findById(@PathVariable Long id)
+    public ComplaintResponse findById(@PathVariable Long id,@AuthenticationPrincipal Jwt jwt)
     {
-        return service.findById(id);
+        return service.findByIdForUser(id,jwt.getSubject());
     }
 }

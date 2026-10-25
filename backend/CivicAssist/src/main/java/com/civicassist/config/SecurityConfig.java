@@ -16,6 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 
 @Configuration
 public class SecurityConfig {
@@ -62,10 +64,34 @@ public class SecurityConfig {
                         "/actuator/health/**",
                         "/api/auth/**"
                 ).permitAll()
+                        .requestMatchers("/api/admin/**")
+                        .hasRole("ADMIN")
                         .anyRequest()
                         .authenticated())
-                .oauth2ResourceServer(oauth2->oauth2.jwt(Customizer.withDefaults())
-                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint()))
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter())
+                        )
+                        .authenticationEntryPoint(
+                                new BearerTokenAuthenticationEntryPoint()
+                        )
+                )
                 .build();
+    }
+
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter authoritiesConverter =
+                new JwtGrantedAuthoritiesConverter();
+
+        authoritiesConverter.setAuthoritiesClaimName("role");
+        authoritiesConverter.setAuthorityPrefix("ROLE_");
+
+        JwtAuthenticationConverter converter =
+                new JwtAuthenticationConverter();
+
+        converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+
+        return converter;
     }
 }

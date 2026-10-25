@@ -15,7 +15,12 @@ public record ComplaintResponse(
         Double longitude,
         ComplaintStatus status,
         OffsetDateTime createdAt,
-        OffsetDateTime updatedAt
+        OffsetDateTime updatedAt,
+        String aiCategory,
+        String aiUrgency,
+        String recommendedDepartment,
+        String aiReasoning,
+        OffsetDateTime triagedAt
 ) {
     public static ComplaintResponse from(Complaint c) {
         return new ComplaintResponse(
@@ -28,7 +33,12 @@ public record ComplaintResponse(
                 c.getLongitude(),
                 c.getStatus(),
                 c.getCreatedAt(),
-                c.getUpdatedAt()
+                c.getUpdatedAt(),
+                c.getAiCategory(),
+                c.getAiUrgency(),
+                c.getRecommendedDepartment(),
+                c.getAiReasoning(),
+                c.getTriagedAt()
         );
     }
 }
