@@ -2,6 +2,7 @@ package com.civicassist.complaint;
 
 import com.civicassist.complaint.dto.ComplaintResponse;
 import com.civicassist.complaint.dto.CreateComplaintRequest;
+import com.civicassist.complaint.dto.CreateComplaintResponse;
 import com.civicassist.user.AppUser;
 import com.civicassist.user.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -15,19 +16,41 @@ import java.util.List;
 public class ComplaintService {
     private final ComplaintRepository complaintRepository;
     private final UserRepository userRepository;
+    private final DuplicateComplaintService duplicateComplaintService;
 
-    public ComplaintService(ComplaintRepository complaintRepository,UserRepository userRepository){
+    public ComplaintService(ComplaintRepository complaintRepository,
+                            UserRepository userRepository,
+                            DuplicateComplaintService duplicateComplaintService){
         this.complaintRepository=complaintRepository;
         this.userRepository=userRepository;
+        this.duplicateComplaintService=duplicateComplaintService;
     }
 
     @Transactional
-    public ComplaintResponse create(CreateComplaintRequest request,String email){
-        validateCoordinates(request.latitude(),request.longitude());
-        AppUser user=userRepository.findByEmail(email)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.UNAUTHORIZED,
-                        "Authenticated user not found"));
-        Complaint complaint=new Complaint();
+    public CreateComplaintResponse create(
+            CreateComplaintRequest request,
+            String email
+    ) {
+        validateCoordinates(request.latitude(), request.longitude());
+
+        AppUser user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED,
+                        "Authenticated user not found"
+                ));
+
+        // Find possible duplicates before saving the new complaint.
+        var potentialDuplicates =
+                duplicateComplaintService.findPotentialDuplicates(
+                        request.title().trim(),
+                        request.description().trim(),
+                        request.category(),
+                        request.address(),
+                        request.latitude(),
+                        request.longitude()
+                );
+
+        Complaint complaint = new Complaint();
         complaint.setTitle(request.title().trim());
         complaint.setDescription(request.description().trim());
         complaint.setAddress(request.address());
@@ -35,7 +58,14 @@ public class ComplaintService {
         complaint.setLatitude(request.latitude());
         complaint.setLongitude(request.longitude());
         complaint.setUser(user);
-        return ComplaintResponse.from(complaintRepository.save(complaint));
+
+        Complaint savedComplaint = complaintRepository.save(complaint);
+
+        return new CreateComplaintResponse(
+                ComplaintResponse.from(savedComplaint),
+                !potentialDuplicates.isEmpty(),
+                potentialDuplicates
+        );
     }
 
     @Transactional(readOnly = true)

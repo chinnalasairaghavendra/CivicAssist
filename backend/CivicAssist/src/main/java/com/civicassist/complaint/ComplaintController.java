@@ -2,6 +2,7 @@ package com.civicassist.complaint;
 
 import com.civicassist.complaint.dto.ComplaintResponse;
 import com.civicassist.complaint.dto.CreateComplaintRequest;
+import com.civicassist.complaint.dto.CreateComplaintResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,9 +24,11 @@ public class ComplaintController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ComplaintResponse create(@Valid @RequestBody CreateComplaintRequest request, @AuthenticationPrincipal Jwt jwt)
-    {
-        return service.create(request,jwt.getSubject());
+    public CreateComplaintResponse create(
+            @Valid @RequestBody CreateComplaintRequest request,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        return service.create(request, jwt.getSubject());
     }
 
     @GetMapping
