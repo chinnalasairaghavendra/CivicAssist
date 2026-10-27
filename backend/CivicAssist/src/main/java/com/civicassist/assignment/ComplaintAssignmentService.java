@@ -4,6 +4,8 @@ import com.civicassist.assignment.dto.AssignDepartmentRequest;
 import com.civicassist.assignment.dto.AssignmentResponse;
 import com.civicassist.complaint.Complaint;
 import com.civicassist.complaint.ComplaintRepository;
+import com.civicassist.department.Department;
+import com.civicassist.department.DepartmentRepository;
 import com.civicassist.user.AppUser;
 import com.civicassist.user.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -12,32 +14,26 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 @Service
 public class ComplaintAssignmentService {
-    private static final Set<String> ALLOWED_DEPARTMENTS=Set.of(
-            "Roads and Infrastructure",
-            "Water Supply",
-            "Sanitation",
-            "Drainage",
-            "Streetlight Maintenance",
-            "Waste Management",
-            "Public Safety",
-            "General Municipal Services"
-    );
     private final ComplaintAssignmentRepository assignmentRepository;
     private final ComplaintRepository complaintRepository;
     private final UserRepository userRepository;
+    private final DepartmentRepository departmentRepository;
 
     public ComplaintAssignmentService(
             ComplaintAssignmentRepository assignmentRepository,
             ComplaintRepository complaintRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            DepartmentRepository departmentRepository
     ){
         this.assignmentRepository=assignmentRepository;
         this.complaintRepository=complaintRepository;
         this.userRepository=userRepository;
+        this.departmentRepository=departmentRepository;
     }
 
     @Transactional
@@ -46,11 +42,20 @@ public class ComplaintAssignmentService {
             AssignDepartmentRequest request,
             String authenticatedEmail
     ){
-        String department=request.department().trim();
-        if(!ALLOWED_DEPARTMENTS.contains(department)){
+        String departmentCode = request.departmentCode()
+                .trim()
+                .toUpperCase(Locale.ROOT);
+
+        Department department = departmentRepository
+                .findByCode(departmentCode)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Invalid department code"
+                ));
+        if (!department.isActive()) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Invalid department"
+                    HttpStatus.CONFLICT,
+                    "Cannot assign a complaint to an inactive department"
             );
         }
         Complaint complaint= complaintRepository.findById(complaintId)

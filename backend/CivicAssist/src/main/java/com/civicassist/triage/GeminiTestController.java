@@ -13,7 +13,7 @@ public class GeminiTestController {
         this.chatClient = builder.build();
     }
 
-    @GetMapping("/test-gemini")
+    @GetMapping("/api/auth/test-gemini")
     public String testGemini() {
         long start = System.currentTimeMillis();
 

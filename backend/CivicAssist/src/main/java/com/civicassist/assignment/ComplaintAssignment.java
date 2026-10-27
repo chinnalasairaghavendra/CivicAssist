@@ -2,6 +2,7 @@ package com.civicassist.assignment;
 
 import com.civicassist.complaint.Complaint;
 import com.civicassist.complaint.ComplaintStatus;
+import com.civicassist.department.Department;
 import com.civicassist.user.AppUser;
 import jakarta.persistence.*;
 
@@ -18,8 +19,9 @@ public class ComplaintAssignment {
     @JoinColumn(name="complaint_id",nullable=false)
     private Complaint complaint;
 
-    @Column(nullable = false, length = 100)
-    private String department;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "department_id", nullable = false)
+    private Department department;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assigned_by")
@@ -51,13 +53,12 @@ public class ComplaintAssignment {
         this.complaint=complaint;
     }
 
-    public String getDepartment() {
+    public Department getDepartment() {
         return department;
     }
 
-    public void setDepartment(String department)
-    {
-        this.department=department;
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     public AppUser getAssignedBy() {

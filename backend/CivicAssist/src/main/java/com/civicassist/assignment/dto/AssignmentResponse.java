@@ -7,6 +7,7 @@ import java.time.OffsetDateTime;
 public record AssignmentResponse(
         Long id,
         Long complaintId,
+        Long departmentId,
         String department,
         Long assignedById,
         String assignedByName,
@@ -18,7 +19,8 @@ public record AssignmentResponse(
     public static AssignmentResponse from(ComplaintAssignment assignment){
         return new AssignmentResponse(assignment.getId(),
                 assignment.getComplaint().getId(),
-                assignment.getDepartment(),
+                assignment.getDepartment().getId(),
+                assignment.getDepartment().getName(),
                 assignment.getAssignedBy()!=null
                 ?assignment.getAssignedBy().getId():null,
                 assignment.getAssignedBy()!=null?assignment.getAssignedBy().getName():null,
