@@ -44,4 +44,4 @@ desktop.ini
 *.swp
 *.bak
 
-data/complaint-attachments
+/data/complaint-attachments/
