@@ -152,4 +152,16 @@ public class ComplaintResolutionService {
             );
         }
     }
+    @Transactional(readOnly = true)
+    public ComplaintResolution getResolutionById(
+            Long complaintId,
+            Long resolutionId
+    ) {
+        return complaintResolutionRepository
+                .findByIdAndComplaint_Id(resolutionId, complaintId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Resolution not found for this complaint"
+                ));
+    }
 }
