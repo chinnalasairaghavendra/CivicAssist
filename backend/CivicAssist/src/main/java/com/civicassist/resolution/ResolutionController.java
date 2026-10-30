@@ -3,6 +3,7 @@ package com.civicassist.resolution;
 import com.civicassist.resolution.dto.CreateResolutionRequest;
 import com.civicassist.resolution.dto.ResolutionResponse;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -43,10 +44,24 @@ public class ResolutionController {
         );
     }
 
-    @GetMapping("api/admin/complaints/{id}/resolutions")
+    @GetMapping("/api/admin/complaints/{id}/resolutions")
     public List<ResolutionResponse> getAllResolutions(
             @PathVariable Long id
     ){
         return resolutionService.getAllResolutions(id);
+    }
+
+    @PostMapping("/api/official/complaints/{id}/resolution")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResolutionResponse createOfficialResolution(
+            @PathVariable Long id,
+            @Valid @RequestBody CreateResolutionRequest request,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        return resolutionService.createResolutionForOfficial(
+                id,
+                request,
+                jwt.getSubject()
+        );
     }
 }

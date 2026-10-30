@@ -13,6 +13,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Locale;
+
 @Service
 public class AuthService {
     private final UserRepository userRepository;
@@ -51,7 +53,7 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request){
-        String email=request.email().trim().toLowerCase();
+        String email=request.email().trim().toLowerCase(Locale.ROOT);
         Authentication authentication=authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email,request.password())
         );

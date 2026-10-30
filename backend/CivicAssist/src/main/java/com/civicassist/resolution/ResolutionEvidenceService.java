@@ -1,9 +1,12 @@
 package com.civicassist.resolution;
 
+import com.civicassist.assignment.ComplaintAssignmentRepository;
 import com.civicassist.attachment.LocalAttachmentStorageService;
 import com.civicassist.attachment.LocalAttachmentStorageService.StoredFile;
 import com.civicassist.complaint.Complaint;
 import com.civicassist.complaint.ComplaintRepository;
+import com.civicassist.user.AppUser;
+import com.civicassist.user.UserRepository;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -26,17 +29,23 @@ public class ResolutionEvidenceService {
     private final ResolutionEvidenceRepository evidenceRepository;
     private final ComplaintResolutionRepository resolutionRepository;
     private final LocalAttachmentStorageService storageService;
+    private final ComplaintAssignmentRepository assignmentRepository;
+    private final UserRepository userRepository;
 
     public ResolutionEvidenceService(
             ResolutionEvidenceRepository evidenceRepository,
             ComplaintResolutionRepository resolutionRepository,
             LocalAttachmentStorageService storageService,
-            ComplaintRepository complaintRepository
+            ComplaintRepository complaintRepository,
+            ComplaintAssignmentRepository assignmentRepository,
+            UserRepository userRepository
     ) {
         this.evidenceRepository = evidenceRepository;
         this.resolutionRepository = resolutionRepository;
         this.storageService = storageService;
         this.complaintRepository=complaintRepository;
+        this.assignmentRepository=assignmentRepository;
+        this.userRepository=userRepository;
     }
 
     @Transactional
@@ -238,6 +247,63 @@ public class ResolutionEvidenceService {
                 complaintId,
                 resolutionId,
                 evidenceId
+        );
+    }
+
+    @Transactional
+    public ResolutionEvidence uploadEvidenceForOfficial(
+            Long complaintId,
+            Long resolutionId,
+            MultipartFile file,
+            String email
+    ) throws IOException {
+
+        // Find the official using the authenticated JWT subject.
+        AppUser official = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Official not found"
+                ));
+
+        if (official.getDepartment() == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Official is not associated with a department"
+            );
+        }
+
+        Long departmentId = official.getDepartment().getId();
+
+        // Ensure the complaint is currently assigned to this department.
+        boolean isAssigned = assignmentRepository
+                .findByComplaint_IdAndDepartment_IdAndCurrentTrue(
+                        complaintId,
+                        departmentId
+                )
+                .isPresent();
+
+        if (!isAssigned) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Complaint is not currently assigned to your department"
+            );
+        }
+
+        // Ensure the resolution belongs to the specified complaint.
+        resolutionRepository.findByIdAndComplaint_Id(
+                        resolutionId,
+                        complaintId
+                )
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Resolution not found for this complaint"
+                ));
+
+        // Reuse existing storage, validation, file-limit, and persistence logic.
+        return uploadEvidence(
+                complaintId,
+                resolutionId,
+                file
         );
     }
 }

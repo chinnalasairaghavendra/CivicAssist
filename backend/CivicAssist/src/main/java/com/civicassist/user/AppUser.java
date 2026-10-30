@@ -1,6 +1,7 @@
 package com.civicassist.user;
 
 
+import com.civicassist.department.Department;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,6 +31,10 @@ public class AppUser implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable=false, length=20)
     private UserRole role;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @Column(name="created_at",nullable=false,updatable=false)
     private OffsetDateTime createdAt;
@@ -106,4 +111,15 @@ public class AppUser implements UserDetails {
         return createdAt;
     }
 
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
 }

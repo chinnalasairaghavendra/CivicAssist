@@ -8,7 +8,6 @@ public record ResolutionResponse(
         Long id,
         Long complaintId,
         String resolutionNotes,
-        String evidenceUrl,
         Long resolvedById,
         String resolvedByName,
         OffsetDateTime resolvedAt
@@ -18,7 +17,6 @@ public record ResolutionResponse(
                 resolution.getId(),
                 resolution.getComplaint().getId(),
                 resolution.getResolutionNotes(),
-                resolution.getEvidenceUrl(),
                 resolution.getResolvedBy()!=null?resolution.getResolvedBy().getId():null,
                 resolution.getResolvedBy()!=null?resolution.getResolvedBy().getName():null,
                 resolution.getResolvedAt()

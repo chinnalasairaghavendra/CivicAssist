@@ -1,10 +1,8 @@
 package com.civicassist.admin;
 
 import com.civicassist.admin.dto.UpdateComplaintStatusRequest;
-import com.civicassist.complaint.Complaint;
-import com.civicassist.complaint.ComplaintRepository;
-import com.civicassist.complaint.ComplaintSpecification;
-import com.civicassist.complaint.ComplaintStatus;
+import com.civicassist.assignment.ComplaintAssignmentRepository;
+import com.civicassist.complaint.*;
 import com.civicassist.complaint.dto.ComplaintResponse;
 import com.civicassist.history.ComplaintStatusHistory;
 import com.civicassist.history.ComplaintStatusHistoryRepository;
@@ -27,13 +25,19 @@ public class AdminComplaintService {
     private final ComplaintRepository complaintRepository;
     private final ComplaintStatusHistoryRepository complaintStatusHistoryRepository;
     private final UserRepository userRepository;
+    private final ComplaintStatusTransitionValidator transitionValidator;
+    private final ComplaintAssignmentRepository assignmentRepository;
 
     public AdminComplaintService(ComplaintRepository complaintRepository,
                                  ComplaintStatusHistoryRepository complaintStatusHistoryRepository,
-                                 UserRepository userRepository){
+                                 UserRepository userRepository,
+                                 ComplaintStatusTransitionValidator complaintStatusTransitionValidator,
+                                 ComplaintAssignmentRepository assignmentRepository){
         this.complaintRepository=complaintRepository;
         this.complaintStatusHistoryRepository=complaintStatusHistoryRepository;
         this.userRepository=userRepository;
+        this.transitionValidator=complaintStatusTransitionValidator;
+        this.assignmentRepository=assignmentRepository;
     }
 
     @Transactional(readOnly = true)
@@ -56,20 +60,25 @@ public class AdminComplaintService {
                                 HttpStatus.UNAUTHORIZED,
                                 "Administrator account not found"
                         ));
-        var previousStatus=complaint.getStatus();
-        var newStatus=request.status();
-        if(previousStatus==newStatus){
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Complaint already has this status"
-            );
-        }
-        if (!isValidTransition(previousStatus, newStatus)) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Invalid status transition from "
-                            + previousStatus + " to " + newStatus
-            );
+        ComplaintStatus previousStatus = complaint.getStatus();
+        ComplaintStatus newStatus = request.status();
+
+        transitionValidator.validateAdminTransition(
+                previousStatus,
+                newStatus
+        );
+        if (newStatus == ComplaintStatus.ASSIGNED) {
+            boolean hasCurrentAssignment = assignmentRepository
+                    .findByComplaint_IdAndCurrentTrue(complaintId)
+                    .isPresent();
+
+            if (!hasCurrentAssignment) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "A complaint must have a current department assignment "
+                                + "before it can be marked ASSIGNED"
+                );
+            }
         }
         ComplaintStatusHistory history=new ComplaintStatusHistory();
         history.setComplaint(complaint);

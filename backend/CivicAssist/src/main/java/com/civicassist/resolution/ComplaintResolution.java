@@ -21,9 +21,6 @@ public class ComplaintResolution {
     @Column(name="resolution_notes",nullable=false,columnDefinition="TEXT")
     private String resolutionNotes;
 
-    @Column(name="evidence_url",length=2048)
-    private String evidenceUrl;
-
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="resolved_by")
     private AppUser resolvedBy;
@@ -59,14 +56,6 @@ public class ComplaintResolution {
 
     public void setResolutionNotes(String resolutionNotes) {
         this.resolutionNotes = resolutionNotes;
-    }
-
-    public String getEvidenceUrl() {
-        return evidenceUrl;
-    }
-
-    public void setEvidenceUrl(String evidenceUrl) {
-        this.evidenceUrl = evidenceUrl;
     }
 
     public AppUser getResolvedBy() {

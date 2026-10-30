@@ -6,8 +6,6 @@ import jakarta.validation.constraints.Size;
 public record CreateResolutionRequest(
         @NotBlank(message="Resolution notes are required")
         @Size(max=10000,message="Resolution notes must not exceed 10000 characters")
-        String resolutionNotes,
-        @Size(max=2048,message="Evidence URL must not exceed 2048 characters")
-        String evidenceUrl
+        String resolutionNotes
 ) {
 }

@@ -1,0 +1,2 @@
+ALTER TABLE complaint_resolutions
+DROP COLUMN evidence_url;
