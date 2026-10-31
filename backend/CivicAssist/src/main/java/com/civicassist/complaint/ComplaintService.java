@@ -3,6 +3,9 @@ package com.civicassist.complaint;
 import com.civicassist.complaint.dto.ComplaintResponse;
 import com.civicassist.complaint.dto.CreateComplaintRequest;
 import com.civicassist.complaint.dto.CreateComplaintResponse;
+import com.civicassist.notification.entity.Notification;
+import com.civicassist.notification.entity.NotificationType;
+import com.civicassist.notification.service.NotificationService;
 import com.civicassist.user.AppUser;
 import com.civicassist.user.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -17,13 +20,16 @@ public class ComplaintService {
     private final ComplaintRepository complaintRepository;
     private final UserRepository userRepository;
     private final DuplicateComplaintService duplicateComplaintService;
+    private final NotificationService notificationService;
 
     public ComplaintService(ComplaintRepository complaintRepository,
                             UserRepository userRepository,
-                            DuplicateComplaintService duplicateComplaintService){
+                            DuplicateComplaintService duplicateComplaintService,
+                            NotificationService notificationService){
         this.complaintRepository=complaintRepository;
         this.userRepository=userRepository;
         this.duplicateComplaintService=duplicateComplaintService;
+        this.notificationService=notificationService;
     }
 
     @Transactional
@@ -61,6 +67,10 @@ public class ComplaintService {
 
         Complaint savedComplaint = complaintRepository.save(complaint);
 
+        notificationService.createNotification(user.getId(),
+                savedComplaint.getId(),
+                "Complaint submitted successfully",
+                "Complaint has been created successfully."+"You can track its status from your dashboard.", NotificationType.COMPLAINT_SUBMITTED);
         return new CreateComplaintResponse(
                 ComplaintResponse.from(savedComplaint),
                 !potentialDuplicates.isEmpty(),

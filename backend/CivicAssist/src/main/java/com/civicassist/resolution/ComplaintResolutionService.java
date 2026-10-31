@@ -7,6 +7,8 @@ import com.civicassist.complaint.ComplaintRepository;
 import com.civicassist.complaint.ComplaintStatus;
 import com.civicassist.history.ComplaintStatusHistory;
 import com.civicassist.history.ComplaintStatusHistoryRepository;
+import com.civicassist.notification.entity.NotificationType;
+import com.civicassist.notification.service.NotificationService;
 import com.civicassist.resolution.dto.CreateResolutionRequest;
 import com.civicassist.resolution.dto.ResolutionResponse;
 import com.civicassist.user.AppUser;
@@ -26,20 +28,24 @@ public class ComplaintResolutionService {
     private final ComplaintStatusHistoryRepository complaintStatusHistoryRepository;
     private final UserRepository userRepository;
     private final ComplaintAssignmentRepository assignmentRepository;
+    private final NotificationService notificationService;
 
     public ComplaintResolutionService(
             ComplaintRepository complaintRepository,
             ComplaintResolutionRepository resolutionRepository,
             ComplaintStatusHistoryRepository historyRepository,
             UserRepository userRepository,
-            ComplaintAssignmentRepository complaintAssignmentRepository) {
+            ComplaintAssignmentRepository complaintAssignmentRepository,
+            NotificationService notificationService) {
 
         this.complaintRepository = complaintRepository;
         this.complaintResolutionRepository = resolutionRepository;
         this.complaintStatusHistoryRepository = historyRepository;
         this.userRepository = userRepository;
         this.assignmentRepository=complaintAssignmentRepository;
+        this.notificationService=notificationService;
     }
+
 
     @Transactional
     public ResolutionResponse createResolution(
@@ -204,7 +210,15 @@ public class ComplaintResolutionService {
         );
 
         complaintStatusHistoryRepository.save(history);
-
+        if(complaint.getStatus()==ComplaintStatus.RESOLVED)
+        {
+            notificationService.createNotification(complaint.getUser().getId(),
+                    complaint.getId(),
+                    "Complaint has been resolved",
+                    "The complaint has been resolved. Please review the resolution details",
+                    NotificationType.RESOLUTION_SUBMITTED
+            );
+        }
         return ResolutionResponse.from(resolution);
     }
 }

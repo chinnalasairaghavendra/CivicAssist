@@ -1,10 +1,13 @@
 package com.civicassist.reopening;
 
+import com.civicassist.assignment.ComplaintAssignmentRepository;
 import com.civicassist.complaint.Complaint;
 import com.civicassist.complaint.ComplaintRepository;
 import com.civicassist.complaint.ComplaintStatus;
 import com.civicassist.history.ComplaintStatusHistory;
 import com.civicassist.history.ComplaintStatusHistoryRepository;
+import com.civicassist.notification.entity.NotificationType;
+import com.civicassist.notification.service.NotificationService;
 import com.civicassist.reopening.dto.CreateReopeningRequest;
 import com.civicassist.reopening.dto.ReopeningRequestResponse;
 import com.civicassist.reopening.dto.ReviewReopeningRequest;
@@ -27,17 +30,23 @@ public class ComplaintReopeningService {
     private final ComplaintReopeningRequestRepository reopeningRepository;
     private final ComplaintStatusHistoryRepository historyRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
+    private final ComplaintAssignmentRepository assignmentRepository;
 
     public ComplaintReopeningService(
             ComplaintRepository complaintRepository,
             ComplaintReopeningRequestRepository reopeningRepository,
             ComplaintStatusHistoryRepository historyRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            NotificationService notificationService,
+            ComplaintAssignmentRepository assignmentRepository
     ) {
         this.complaintRepository = complaintRepository;
         this.reopeningRepository = reopeningRepository;
         this.historyRepository = historyRepository;
         this.userRepository = userRepository;
+        this.notificationService=notificationService;
+        this.assignmentRepository=assignmentRepository;
     }
 
     @Transactional
@@ -172,6 +181,13 @@ public class ComplaintReopeningService {
         }
 
         if (request.decision() == ReopeningRequestStatus.APPROVED) {
+
+            assignmentRepository.findByComplaint_IdAndCurrentTrue(complaint.getId())
+                    .ifPresent(existingAssignment->{
+                        existingAssignment.setCurrent(false);
+                        assignmentRepository.save(existingAssignment);
+                        }
+                    );
             ComplaintStatus previousStatus = complaint.getStatus();
 
             complaint.setStatus(ComplaintStatus.UNDER_REVIEW);
@@ -192,6 +208,7 @@ public class ComplaintReopeningService {
             historyRepository.save(history);
         }
 
+
         reopeningRequest.setStatus(request.decision());
         reopeningRequest.setReviewedBy(admin);
         reopeningRequest.setReviewedAt(OffsetDateTime.now());
@@ -202,8 +219,43 @@ public class ComplaintReopeningService {
                         : request.adminComment().trim()
         );
 
-        return ReopeningRequestResponse.from(
-                reopeningRepository.save(reopeningRequest)
+        ComplaintReopeningRequest savedRequest =
+                reopeningRepository.save(reopeningRequest);
+
+// Notify the citizen who requested reopening.
+        String title;
+        String message;
+
+        if (request.decision() == ReopeningRequestStatus.APPROVED) {
+
+            title = "Reopening Request Approved";
+
+            message = "Your reopening request for complaint #"
+                    + complaint.getId()
+                    + " has been approved. Your complaint is now under review.";
+
+        } else {
+
+            title = "Reopening Request Rejected";
+
+            message = "Your reopening request for complaint #"
+                    + complaint.getId()
+                    + " has been rejected.";
+
+            if (savedRequest.getAdminComment() != null) {
+                message += " Admin comment: "
+                        + savedRequest.getAdminComment();
+            }
+        }
+
+        notificationService.createNotification(
+                savedRequest.getRequestedBy().getId(),
+                complaint.getId(),
+                title,
+                message,
+                NotificationType.REOPENING_REQUEST_REVIEWED
         );
+
+        return ReopeningRequestResponse.from(savedRequest);
     }
 }

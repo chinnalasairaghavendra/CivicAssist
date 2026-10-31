@@ -9,6 +9,8 @@ import com.civicassist.complaint.ComplaintStatusTransitionValidator;
 import com.civicassist.complaint.dto.ComplaintResponse;
 import com.civicassist.history.ComplaintStatusHistory;
 import com.civicassist.history.ComplaintStatusHistoryRepository;
+import com.civicassist.notification.entity.NotificationType;
+import com.civicassist.notification.service.NotificationService;
 import com.civicassist.user.AppUser;
 import com.civicassist.user.UserRepository;
 import org.springframework.data.domain.Page;
@@ -28,19 +30,22 @@ public class OfficialComplaintService {
     private final UserRepository userRepository;
     private final ComplaintStatusHistoryRepository historyRepository;
     private final ComplaintStatusTransitionValidator transitionValidator;
+    private final NotificationService notificationService;
 
     public OfficialComplaintService(
             ComplaintAssignmentRepository assignmentRepository,
             ComplaintRepository complaintRepository,
             UserRepository userRepository,
             ComplaintStatusHistoryRepository historyRepository,
-            ComplaintStatusTransitionValidator transitionValidator
+            ComplaintStatusTransitionValidator transitionValidator,
+            NotificationService notificationService
     ) {
         this.assignmentRepository = assignmentRepository;
         this.complaintRepository = complaintRepository;
         this.userRepository = userRepository;
         this.historyRepository = historyRepository;
         this.transitionValidator=transitionValidator;
+        this.notificationService=notificationService;
     }
 
     @Transactional(readOnly = true)
@@ -139,6 +144,14 @@ public class OfficialComplaintService {
         );
 
         historyRepository.save(history);
+        if(previousStatus!=newStatus)
+        {
+            notificationService.createNotification(complaint.getUser().getId(),
+                    complaint.getId(),
+                    "Complaint Status Updated",
+                    "Your complaint status has been updated from "+previousStatus+" to "+newStatus+".",
+                    NotificationType.STATUS_CHANGED);
+        }
 
         return ComplaintResponse.from(savedComplaint);
     }

@@ -153,6 +153,10 @@ public class Complaint {
         this.updatedAt = updatedAt;
     }
 
+    public AppUser getUser(){
+        return user;
+    }
+
     public void setUser(AppUser user) {
         this.user = user;
     }

@@ -7,6 +7,8 @@ import com.civicassist.complaint.dto.ComplaintResponse;
 import com.civicassist.history.ComplaintStatusHistory;
 import com.civicassist.history.ComplaintStatusHistoryRepository;
 import com.civicassist.history.dto.ComplaintStatusHistoryResponse;
+import com.civicassist.notification.entity.NotificationType;
+import com.civicassist.notification.service.NotificationService;
 import com.civicassist.user.AppUser;
 import com.civicassist.user.UserRepository;
 import org.springframework.data.domain.Page;
@@ -27,17 +29,20 @@ public class AdminComplaintService {
     private final UserRepository userRepository;
     private final ComplaintStatusTransitionValidator transitionValidator;
     private final ComplaintAssignmentRepository assignmentRepository;
+    private final NotificationService notificationService;
 
     public AdminComplaintService(ComplaintRepository complaintRepository,
                                  ComplaintStatusHistoryRepository complaintStatusHistoryRepository,
                                  UserRepository userRepository,
                                  ComplaintStatusTransitionValidator complaintStatusTransitionValidator,
-                                 ComplaintAssignmentRepository assignmentRepository){
+                                 ComplaintAssignmentRepository assignmentRepository,
+                                 NotificationService notificationService){
         this.complaintRepository=complaintRepository;
         this.complaintStatusHistoryRepository=complaintStatusHistoryRepository;
         this.userRepository=userRepository;
         this.transitionValidator=complaintStatusTransitionValidator;
         this.assignmentRepository=assignmentRepository;
+        this.notificationService=notificationService;
     }
 
     @Transactional(readOnly = true)
@@ -91,8 +96,19 @@ public class AdminComplaintService {
                         :request.reason().trim()
         );
         complaint.setStatus(newStatus);
-        complaintRepository.save(complaint);
+        Complaint savedComplaint=complaintRepository.save(complaint);
         complaintStatusHistoryRepository.save(history);
+        if (previousStatus != newStatus) {
+
+            notificationService.createNotification(
+                    savedComplaint.getUser().getId(),
+                    savedComplaint.getId(),
+                    "Complaint Status Updated",
+                    "Your complaint status has changed from "
+                            + previousStatus + " to " + newStatus + ".",
+                    NotificationType.STATUS_CHANGED
+            );
+        }
         return ComplaintResponse.from(complaint);
     }
 
