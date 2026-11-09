@@ -1,9 +1,13 @@
 package com.civicassist.complaint;
 
+import com.civicassist.triage.dto.ExtractedDetail;
 import com.civicassist.user.AppUser;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Entity
 @Table(name="complaints")
@@ -53,10 +57,40 @@ public class Complaint {
     @Column(name = "triaged_at")
     private OffsetDateTime triagedAt;
 
+    @Column(name = "ai_prompt_version", length = 30)
+    private String aiPromptVersion;
+
+    @Column(name = "ai_model", length = 100)
+    private String aiModel;
+
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name="user_id")
     private AppUser user;
 
+    @Column(name = "ai_summary", columnDefinition = "TEXT")
+    private String aiSummary;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "ai_extracted_details", columnDefinition = "JSONB")
+    private List<ExtractedDetail> aiExtractedDetails;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "ai_missing_information", columnDefinition = "JSONB")
+    private List<String> aiMissingInformation;
+
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ai_triage_status", length = 20)
+    private AiTriageStatus aiTriageStatus = AiTriageStatus.PENDING;
+
+    @Column(name = "ai_triage_attempts", nullable = false)
+    private Integer aiTriageAttempts = 0;
+
+    @Column(name = "ai_triage_error", columnDefinition = "TEXT")
+    private String aiTriageError;
+
+    @Column(name = "ai_last_attempt_at")
+    private OffsetDateTime aiLastAttemptAt;
 
     protected Complaint() {
     }
@@ -199,5 +233,77 @@ public class Complaint {
 
     public void setTriagedAt(OffsetDateTime triagedAt) {
         this.triagedAt = triagedAt;
+    }
+
+    public String getAiPromptVersion() {
+        return aiPromptVersion;
+    }
+
+    public void setAiPromptVersion(String aiPromptVersion) {
+        this.aiPromptVersion = aiPromptVersion;
+    }
+
+    public String getAiModel() {
+        return aiModel;
+    }
+
+    public void setAiModel(String aiModel) {
+        this.aiModel = aiModel;
+    }
+
+    public String getAiSummary() {
+        return aiSummary;
+    }
+
+    public void setAiSummary(String aiSummary) {
+        this.aiSummary = aiSummary;
+    }
+
+    public List<ExtractedDetail> getAiExtractedDetails() {
+        return aiExtractedDetails;
+    }
+
+    public void setAiExtractedDetails(List<ExtractedDetail> aiExtractedDetails) {
+        this.aiExtractedDetails = aiExtractedDetails;
+    }
+
+    public List<String> getAiMissingInformation() {
+        return aiMissingInformation;
+    }
+
+    public void setAiMissingInformation(List<String> aiMissingInformation) {
+        this.aiMissingInformation = aiMissingInformation;
+    }
+
+    public AiTriageStatus getAiTriageStatus() {
+        return aiTriageStatus;
+    }
+
+    public void setAiTriageStatus(AiTriageStatus aiTriageStatus) {
+        this.aiTriageStatus = aiTriageStatus;
+    }
+
+    public Integer getAiTriageAttempts() {
+        return aiTriageAttempts;
+    }
+
+    public void setAiTriageAttempts(Integer aiTriageAttempts) {
+        this.aiTriageAttempts = aiTriageAttempts;
+    }
+
+    public String getAiTriageError() {
+        return aiTriageError;
+    }
+
+    public void setAiTriageError(String aiTriageError) {
+        this.aiTriageError = aiTriageError;
+    }
+
+    public OffsetDateTime getAiLastAttemptAt() {
+        return aiLastAttemptAt;
+    }
+
+    public void setAiLastAttemptAt(OffsetDateTime aiLastAttemptAt) {
+        this.aiLastAttemptAt = aiLastAttemptAt;
     }
 }

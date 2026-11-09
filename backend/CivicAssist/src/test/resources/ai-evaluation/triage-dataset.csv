@@ -1,0 +1,61 @@
+id,title,description,expected_category,expected_urgency,expected_department
+1,Large pothole,A large pothole is causing traffic disruption near a busy junction.,ROADS,HIGH,Roads and Infrastructure Department
+2,Garbage accumulation,Garbage has not been collected for two days and is attracting stray animals.,WASTE_MANAGEMENT,MEDIUM,Waste Management Department
+3,Water pipeline leakage,A water pipeline is leaking continuously and water is flowing onto the road.,WATER_SUPPLY,HIGH,Water and pipelines
+4,Blocked storm drain,A stormwater drain is blocked with silt and rainwater is accumulating nearby.,DRAINAGE,HIGH,Drainage
+5,Damaged road surface,"The road surface has broken apart, making it difficult for vehicles to pass.",ROADS,HIGH,Roads and Infrastructure Department
+6,Overflowing community bins,Community waste bins are overflowing and waste is scattered around them.,WASTE_MANAGEMENT,MEDIUM,Waste Management Department
+7,Low water pressure,Water pressure has been very low in our locality for the past three days.,WATER_SUPPLY,MEDIUM,Water and pipelines
+8,Drain cover missing,A stormwater drain cover is missing and the opening is exposed to pedestrians.,DRAINAGE,HIGH,Drainage
+9,Cracked footpath,"The footpath is cracked and uneven, creating difficulty for pedestrians.",ROADS,MEDIUM,Roads and Infrastructure Department
+10,Missed waste collection,The municipal waste collection vehicle has not visited our street this week.,WASTE_MANAGEMENT,MEDIUM,Waste Management Department
+11,Burst water pipe,A water supply pipe has burst and a large amount of water is being wasted.,WATER_SUPPLY,CRITICAL,Water and pipelines
+12,Drain water stagnation,Dirty water is stagnating in the open drain and producing a foul smell.,DRAINAGE,HIGH,Drainage
+13,Roadside pavement damage,The pavement beside the main road is damaged and loose concrete is falling off.,ROADS,MEDIUM,Roads and Infrastructure Department
+14,Illegal waste dumping,Construction and household waste have been dumped beside the public road.,WASTE_MANAGEMENT,MEDIUM,Waste Management Department
+15,Contaminated water supply,Water supplied to several houses appears muddy and has an unusual smell.,WATER_SUPPLY,HIGH,Water and pipelines
+16,Sewage blockage in drain,A drainage channel is blocked and sewage is backing up into the street.,DRAINAGE,CRITICAL,Drainage
+17,Road subsidence,A section of the road has sunk and vehicles are swerving to avoid it.,ROADS,HIGH,Roads and Infrastructure Department
+18,Uncollected household waste,Household waste bags have remained at the collection point for several days.,WASTE_MANAGEMENT,MEDIUM,Waste Management Department
+19,Water supply interruption,There has been no municipal water supply in our area since yesterday.,WATER_SUPPLY,HIGH,Water and pipelines
+20,Drain overflow after rain,The roadside drain is overflowing after rainfall and water is entering nearby properties.,DRAINAGE,HIGH,Drainage
+21,Loose manhole cover,A road-side manhole cover is loose and makes a loud noise when vehicles pass.,DRAINAGE,MEDIUM,Drainage
+22,Damaged speed breaker,A damaged speed breaker has exposed sharp pieces of concrete on the road.,ROADS,MEDIUM,Roads and Infrastructure Department
+23,Waste pile near school,A large pile of uncollected waste is present near the school entrance.,WASTE_MANAGEMENT,HIGH,Waste Management Department
+24,Leaking public water valve,A public water valve is leaking throughout the day and flooding the footpath.,WATER_SUPPLY,HIGH,Water and pipelines
+25,Blocked roadside drain,"Plastic bags and silt have blocked the roadside drain, preventing water flow.",DRAINAGE,MEDIUM,Drainage
+26,Broken road divider,A section of the road divider has collapsed onto the carriageway.,ROADS,HIGH,Roads and Infrastructure Department
+27,Missed bulk waste pickup,Large household items left for scheduled collection have not been removed.,WASTE_MANAGEMENT,LOW,Waste Management Department
+28,Water meter connection leak,Water is leaking from the municipal supply connection near the meter.,WATER_SUPPLY,MEDIUM,Water and pipelines
+29,Flooded underpass drain,The drainage pumps or outlets at the underpass appear blocked and water is collecting.,DRAINAGE,CRITICAL,Drainage
+30,Uneven road patchwork,Recent road repairs have left an uneven surface that is difficult for two-wheelers.,ROADS,MEDIUM,Roads and Infrastructure Department
+31,Overflowing public waste point,The designated public waste collection point is overflowing onto the road.,WASTE_MANAGEMENT,HIGH,Waste Management Department
+32,Water pipeline seepage,Water is seeping from an underground pipeline and creating a wet patch on the street.,WATER_SUPPLY,MEDIUM,Water and pipelines
+33,Drain clogged with leaves,Fallen leaves have accumulated in the stormwater drain and are blocking the flow.,DRAINAGE,LOW,Drainage
+34,Road shoulder erosion,"The edge of the road has eroded, leaving a steep drop beside the traffic lane.",ROADS,HIGH,Roads and Infrastructure Department
+35,Waste collection point not cleaned,Waste has been removed but the collection point has not been cleaned for several days.,WASTE_MANAGEMENT,LOW,Waste Management Department
+36,Public tap not working,The public water tap has stopped supplying water despite the scheduled supply time.,WATER_SUPPLY,MEDIUM,Water and pipelines
+37,Drainage water entering homes,Blocked drainage is causing wastewater to enter ground-floor homes.,DRAINAGE,CRITICAL,Drainage
+38,Damaged asphalt near bus stop,The asphalt near a bus stop is broken and buses are stopping around the damaged area.,ROADS,HIGH,Roads and Infrastructure Department
+39,Segregated waste not collected,Separate wet and dry waste containers have not been emptied on the scheduled day.,WASTE_MANAGEMENT,MEDIUM,Waste Management Department
+40,Water pipeline exposed,"Road work has exposed a municipal water pipe, leaving it vulnerable to damage.",WATER_SUPPLY,HIGH,Water and pipelines
+41,Silted stormwater channel,Heavy silt deposits have reduced the capacity of the stormwater channel.,DRAINAGE,MEDIUM,Drainage
+42,Damaged culvert approach,The road surface near a culvert is badly damaged and vehicles are slowing suddenly.,ROADS,HIGH,Roads and Infrastructure Department
+43,Animal waste at collection area,Waste and animal remains have been left at the municipal collection area.,WASTE_MANAGEMENT,HIGH,Waste Management Department
+44,Irregular water timings,The municipal water supply timing has become irregular over the last week.,WATER_SUPPLY,MEDIUM,Water and pipelines
+45,Drainage channel damaged,A section of the open drainage channel has collapsed and soil is falling into it.,DRAINAGE,HIGH,Drainage
+46,Pothole near hospital entrance,A deep pothole near a hospital entrance is obstructing ambulance and other vehicle movement.,ROADS,CRITICAL,Roads and Infrastructure Department
+47,Community bin not emptied,The community bin has not been emptied according to the regular collection schedule.,WASTE_MANAGEMENT,MEDIUM,Waste Management Department
+48,Water pipe joint failure,A joint in the public water pipeline has separated and water is spraying onto the street.,WATER_SUPPLY,HIGH,Water and pipelines
+49,Drainage outlet blocked,The outlet of a neighborhood stormwater drain is blocked by accumulated debris.,DRAINAGE,MEDIUM,Drainage
+50,Road markings faded,"Road markings have faded significantly, making lane guidance difficult to see.",ROADS,LOW,Roads and Infrastructure Department
+51,Garbage dumped beside park,Mixed municipal waste has been dumped beside the public park boundary.,WASTE_MANAGEMENT,MEDIUM,Waste Management Department
+52,Water supply valve damaged,The handle of a public water supply valve is broken and the valve cannot be operated normally.,WATER_SUPPLY,MEDIUM,Water and pipelines
+53,Drain blocked near market,Food waste and plastic packaging have blocked the drain near the market.,DRAINAGE,HIGH,Drainage
+54,Roadside retaining wall damage,A roadside retaining wall has developed cracks and pieces are falling onto the shoulder.,ROADS,HIGH,Roads and Infrastructure Department
+55,Waste left after collection,Collected waste has been left in heaps around the collection point instead of being cleared.,WASTE_MANAGEMENT,MEDIUM,Waste Management Department
+56,Water main leak near junction,A major water main is leaking near a road junction and causing waterlogging.,WATER_SUPPLY,CRITICAL,Water and pipelines
+57,Storm drain grate blocked,The grate covering the storm drain is clogged with plastic and leaves.,DRAINAGE,MEDIUM,Drainage
+58,Damaged pedestrian crossing surface,The road surface at the pedestrian crossing is broken and uneven.,ROADS,MEDIUM,Roads and Infrastructure Department
+59,Waste burning at collection site,A pile of municipal waste is smoldering at the designated collection site.,WASTE_MANAGEMENT,CRITICAL,Waste Management Department
+60,Water distribution pipe corrosion,An old water distribution pipe is corroded and has started leaking at several points.,WATER_SUPPLY,HIGH,Water and pipelines

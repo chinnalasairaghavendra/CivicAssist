@@ -1,8 +1,13 @@
 package com.civicassist.triage.dto;
 
 import jakarta.persistence.Column;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import java.util.List;
+
 
 public record TriageSuggestion(
         @NotBlank
@@ -19,7 +24,20 @@ public record TriageSuggestion(
 
         @NotBlank
         @Size(max=1000)
-        String reasoning
+        String reasoning,
+
+        @NotBlank
+        @Size(max = 500)
+        String summary,
+
+        @NotNull
+        @Size(max = 10)
+        List<@NotNull @Valid ExtractedDetail> extractedDetails,
+
+        @NotNull
+        @Size(max = 10)
+        List<@NotBlank @Size(max = 200) String> missingInformation
+
 ) {
 
 

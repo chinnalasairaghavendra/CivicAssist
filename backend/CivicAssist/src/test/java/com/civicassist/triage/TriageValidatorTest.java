@@ -1,10 +1,12 @@
 package com.civicassist.triage;
 
+import com.civicassist.triage.dto.ExtractedDetail;
 import com.civicassist.triage.dto.TriageSuggestion;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,12 +21,18 @@ public class TriageValidatorTest {
             "Waste Management Department"
     );
 
-    private TriageSuggestion validSuggestion(){
+    private TriageSuggestion validSuggestion() {
         return new TriageSuggestion(
                 "ROADS",
                 "HIGH",
                 "Roads and Infrastructure Department",
-                "The reported pothole may create a road safety risk"
+                "The reported pothole may create a road safety risk",
+                "A pothole has been reported that may create a road safety risk.",
+                List.of(
+                        new ExtractedDetail("issue", "Pothole"),
+                        new ExtractedDetail("impact", "Road safety risk")
+                ),
+                List.of("Exact pothole location")
         );
     }
 
@@ -53,7 +61,13 @@ public class TriageValidatorTest {
                 "roads",
                 "high",
                 "Roads and Infrastructure Department",
-                "Pothole reported on the road."
+                "The reported pothole may create a road safety risk",
+                "A pothole has been reported that may create a road safety risk.",
+                List.of(
+                        new ExtractedDetail("issue", "Pothole"),
+                        new ExtractedDetail("impact", "Road safety risk")
+                ),
+                List.of("Exact pothole location")
         );
         TriageSuggestion result=validator.validate(suggestion,allowedDepartments);
         assertEquals("ROADS",result.category());
@@ -66,7 +80,13 @@ public class TriageValidatorTest {
                 "ROADS",
                 "HIGH",
                 " Roads and Infrastructure Department  ",
-                "  Pothole reported on the road.  "
+                "  Pothole reported on the road.  ",
+                "A pothole has been reported that may create a road safety risk.",
+                List.of(
+                        new ExtractedDetail("issue", "Pothole"),
+                        new ExtractedDetail("impact", "Road safety risk")
+                ),
+                List.of("Exact pothole location")
         );
 
         TriageSuggestion result = validator.validate(
@@ -105,7 +125,13 @@ public class TriageValidatorTest {
                 "ELECTRICITY",
                 "HIGH",
                 "Roads and Infrastructure Department",
-                "Electrical issue reported."
+                "Electrical issue reported.",
+                "A pothole has been reported that may create a road safety risk.",
+                List.of(
+                        new ExtractedDetail("issue", "Pothole"),
+                        new ExtractedDetail("impact", "Road safety risk")
+                ),
+                List.of("Exact pothole location")
         );
 
         assertInvalid(suggestion);
@@ -117,7 +143,13 @@ public class TriageValidatorTest {
                 null,
                 "HIGH",
                 "Roads and Infrastructure Department",
-                "Pothole reported."
+                "Pothole reported.",
+                "A pothole has been reported that may create a road safety risk.",
+                List.of(
+                        new ExtractedDetail("issue", "Pothole"),
+                        new ExtractedDetail("impact", "Road safety risk")
+                ),
+                List.of("Exact pothole location")
         );
 
         assertInvalid(suggestion);
@@ -129,7 +161,13 @@ public class TriageValidatorTest {
                 "ROADS",
                 "URGENT",
                 "Roads and Infrastructure Department",
-                "Pothole reported."
+                "Pothole reported.",
+                "A pothole has been reported that may create a road safety risk.",
+                List.of(
+                        new ExtractedDetail("issue", "Pothole"),
+                        new ExtractedDetail("impact", "Road safety risk")
+                ),
+                List.of("Exact pothole location")
         );
 
         assertInvalid(suggestion);
@@ -141,7 +179,13 @@ public class TriageValidatorTest {
                 "ROADS",
                 null,
                 "Roads and Infrastructure Department",
-                "Pothole reported."
+                "Pothole reported.",
+                "A pothole has been reported that may create a road safety risk.",
+                List.of(
+                        new ExtractedDetail("issue", "Pothole"),
+                        new ExtractedDetail("impact", "Road safety risk")
+                ),
+                List.of("Exact pothole location")
         );
 
         assertInvalid(suggestion);
@@ -153,7 +197,13 @@ public class TriageValidatorTest {
                 "ROADS",
                 "HIGH",
                 "Electrical Department",
-                "Pothole reported."
+                "Pothole reported.",
+                "A pothole has been reported that may create a road safety risk.",
+                List.of(
+                        new ExtractedDetail("issue", "Pothole"),
+                        new ExtractedDetail("impact", "Road safety risk")
+                ),
+                List.of("Exact pothole location")
         );
 
         assertInvalid(suggestion);
@@ -165,7 +215,13 @@ public class TriageValidatorTest {
                 "ROADS",
                 "HIGH",
                 "roads and infrastructure department",
-                "Pothole reported."
+                "Pothole reported.",
+                "A pothole has been reported that may create a road safety risk.",
+                List.of(
+                        new ExtractedDetail("issue", "Pothole"),
+                        new ExtractedDetail("impact", "Road safety risk")
+                ),
+                List.of("Exact pothole location")
         );
 
         assertInvalid(suggestion);
@@ -177,7 +233,13 @@ public class TriageValidatorTest {
                 "ROADS",
                 "HIGH",
                 null,
-                "Pothole reported."
+                "Pothole reported.",
+                "A pothole has been reported that may create a road safety risk.",
+                List.of(
+                        new ExtractedDetail("issue", "Pothole"),
+                        new ExtractedDetail("impact", "Road safety risk")
+                ),
+                List.of("Exact pothole location")
         );
 
         assertInvalid(suggestion);
@@ -189,7 +251,13 @@ public class TriageValidatorTest {
                 "ROADS",
                 "HIGH",
                 "Roads and Infrastructure Department",
-                null
+                null,
+                "A pothole has been reported that may create a road safety risk.",
+                List.of(
+                        new ExtractedDetail("issue", "Pothole"),
+                        new ExtractedDetail("impact", "Road safety risk")
+                ),
+                List.of("Exact pothole location")
         );
 
         assertInvalid(suggestion);
@@ -201,7 +269,13 @@ public class TriageValidatorTest {
                 "ROADS",
                 "HIGH",
                 "Roads and Infrastructure",
-                "   "
+                "   ",
+                "A pothole has been reported that may create a road safety risk.",
+                List.of(
+                        new ExtractedDetail("issue", "Pothole"),
+                        new ExtractedDetail("impact", "Road safety risk")
+                ),
+                List.of("Exact pothole location")
         );
 
         assertInvalid(suggestion);
@@ -215,7 +289,13 @@ public class TriageValidatorTest {
                 "ROADS",
                 "HIGH",
                 "Roads and Infrastructure Department",
-                reasoning
+                reasoning,
+                "A pothole has been reported that may create a road safety risk.",
+                List.of(
+                        new ExtractedDetail("issue", "Pothole"),
+                        new ExtractedDetail("impact", "Road safety risk")
+                ),
+                List.of("Exact pothole location")
         );
 
         TriageSuggestion result = validator.validate(
@@ -234,12 +314,234 @@ public class TriageValidatorTest {
                 "ROADS",
                 "HIGH",
                 "Roads and Infrastructure Department",
-                reasoning
+                reasoning,
+                "A pothole has been reported that may create a road safety risk.",
+                List.of(
+                        new ExtractedDetail("issue", "Pothole"),
+                        new ExtractedDetail("impact", "Road safety risk")
+                ),
+                List.of("Exact pothole location")
         );
 
         assertInvalid(suggestion);
     }
 
+
+    @Test
+    void shouldAcceptValidExtraction() {
+        TriageSuggestion result = validator.validate(
+                validSuggestion(),
+                allowedDepartments
+        );
+
+        assertEquals(
+                "A pothole has been reported that may create a road safety risk.",
+                result.summary()
+        );
+
+        assertEquals(2, result.extractedDetails().size());
+        assertEquals("issue", result.extractedDetails().get(0).field());
+        assertEquals("Pothole", result.extractedDetails().get(0).value());
+
+        assertEquals(
+                List.of("Exact pothole location"),
+                result.missingInformation()
+        );
+    }
+
+    @Test
+    void shouldRejectNullSummary() {
+        TriageSuggestion suggestion = new TriageSuggestion(
+                "ROADS", "HIGH",
+                "Roads and Infrastructure Department",
+                "Valid reasoning",
+                null,
+                List.of(),
+                List.of()
+        );
+
+        assertInvalid(suggestion);
+    }
+
+    @Test
+    void shouldRejectBlankSummary() {
+        TriageSuggestion suggestion = new TriageSuggestion(
+                "ROADS", "HIGH",
+                "Roads and Infrastructure Department",
+                "Valid reasoning",
+                "   ",
+                List.of(),
+                List.of()
+        );
+
+        assertInvalid(suggestion);
+    }
+
+    @Test
+    void shouldRejectSummaryLongerThan500Characters() {
+        TriageSuggestion suggestion = new TriageSuggestion(
+                "ROADS", "HIGH",
+                "Roads and Infrastructure Department",
+                "Valid reasoning",
+                "A".repeat(501),
+                List.of(),
+                List.of()
+        );
+
+        assertInvalid(suggestion);
+    }
+
+    @Test
+    void shouldRejectNullExtractedDetails() {
+        TriageSuggestion suggestion = new TriageSuggestion(
+                "ROADS", "HIGH",
+                "Roads and Infrastructure Department",
+                "Valid reasoning",
+                "Valid summary",
+                null,
+                List.of()
+        );
+
+        assertInvalid(suggestion);
+    }
+
+    @Test
+    void shouldRejectBlankExtractedField() {
+        TriageSuggestion suggestion = new TriageSuggestion(
+                "ROADS", "HIGH",
+                "Roads and Infrastructure Department",
+                "Valid reasoning",
+                "Valid summary",
+                List.of(new ExtractedDetail(" ", "Pothole")),
+                List.of()
+        );
+
+        assertInvalid(suggestion);
+    }
+
+    @Test
+    void shouldRejectBlankExtractedValue() {
+        TriageSuggestion suggestion = new TriageSuggestion(
+                "ROADS", "HIGH",
+                "Roads and Infrastructure Department",
+                "Valid reasoning",
+                "Valid summary",
+                List.of(new ExtractedDetail("issue", " ")),
+                List.of()
+        );
+
+        assertInvalid(suggestion);
+    }
+
+    @Test
+    void shouldRejectMoreThan10ExtractedDetails() {
+        List<ExtractedDetail> details = java.util.stream.IntStream
+                .range(0, 11)
+                .mapToObj(i -> new ExtractedDetail("field" + i, "value" + i))
+                .toList();
+
+        TriageSuggestion suggestion = new TriageSuggestion(
+                "ROADS", "HIGH",
+                "Roads and Infrastructure Department",
+                "Valid reasoning",
+                "Valid summary",
+                details,
+                List.of()
+        );
+
+        assertInvalid(suggestion);
+    }
+
+    @Test
+    void shouldRejectNullMissingInformation() {
+        TriageSuggestion suggestion = new TriageSuggestion(
+                "ROADS", "HIGH",
+                "Roads and Infrastructure Department",
+                "Valid reasoning",
+                "Valid summary",
+                List.of(),
+                null
+        );
+
+        assertInvalid(suggestion);
+    }
+
+    @Test
+    void shouldRejectBlankMissingInformation() {
+        TriageSuggestion suggestion = new TriageSuggestion(
+                "ROADS", "HIGH",
+                "Roads and Infrastructure Department",
+                "Valid reasoning",
+                "Valid summary",
+                List.of(),
+                List.of(" ")
+        );
+
+        assertInvalid(suggestion);
+    }
+
+    @Test
+    void shouldRejectMoreThan10MissingInformationEntries() {
+        List<String> missing = java.util.stream.IntStream
+                .range(0, 11)
+                .mapToObj(i -> "Missing field " + i)
+                .toList();
+
+        TriageSuggestion suggestion = new TriageSuggestion(
+                "ROADS", "HIGH",
+                "Roads and Infrastructure Department",
+                "Valid reasoning",
+                "Valid summary",
+                List.of(),
+                missing
+        );
+
+        assertInvalid(suggestion);
+    }
+
+    @Test
+    void shouldAllowEmptyExtractionLists() {
+        TriageSuggestion suggestion = new TriageSuggestion(
+                "ROADS", "HIGH",
+                "Roads and Infrastructure Department",
+                "Valid reasoning",
+                "Valid summary",
+                List.of(),
+                List.of()
+        );
+
+        TriageSuggestion result = validator.validate(
+                suggestion,
+                allowedDepartments
+        );
+
+        assertNotNull(result);
+        assertTrue(result.extractedDetails().isEmpty());
+        assertTrue(result.missingInformation().isEmpty());
+    }
+
+    @Test
+    void shouldTrimExtractionFields() {
+        TriageSuggestion suggestion = new TriageSuggestion(
+                "ROADS",
+                "HIGH",
+                "Roads and Infrastructure Department",
+                " Valid reasoning ",
+                " Valid summary ",
+                List.of(new ExtractedDetail(" issue ", " Pothole ")),
+                List.of(" Exact location ")
+        );
+
+        TriageSuggestion result = validator.validate(
+                suggestion,
+                allowedDepartments
+        );
+
+        assertEquals("Valid summary", result.summary());
+        assertEquals("issue", result.extractedDetails().get(0).field());
+        assertEquals("Pothole", result.extractedDetails().get(0).value());
+        assertEquals("Exact location", result.missingInformation().get(0));
+    }
 
 
 }

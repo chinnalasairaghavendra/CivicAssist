@@ -2,8 +2,10 @@ package com.civicassist.complaint.dto;
 
 import com.civicassist.complaint.Complaint;
 import com.civicassist.complaint.ComplaintStatus;
+import com.civicassist.triage.dto.ExtractedDetail;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 public record ComplaintResponse(
         Long id,
@@ -20,7 +22,12 @@ public record ComplaintResponse(
         String aiUrgency,
         String recommendedDepartment,
         String aiReasoning,
-        OffsetDateTime triagedAt
+        OffsetDateTime triagedAt,
+        String aiPromptVersion,
+        String aiModel,
+        String aiSummary,
+        List<ExtractedDetail> aiExtractedDetails,
+        List<String> aiMissingInformation
 ) {
     public static ComplaintResponse from(Complaint c) {
         return new ComplaintResponse(
@@ -38,7 +45,12 @@ public record ComplaintResponse(
                 c.getAiUrgency(),
                 c.getRecommendedDepartment(),
                 c.getAiReasoning(),
-                c.getTriagedAt()
+                c.getTriagedAt(),
+                c.getAiPromptVersion(),
+                c.getAiModel(),
+                c.getAiSummary(),
+                c.getAiExtractedDetails(),
+                c.getAiMissingInformation()
         );
     }
 }
